@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "up-behaviour-planning"
+version = "0.1.0"
+description = "A unified planning interface for behaviour planning."
+authors = ["Mustafa Faisal <mustafa.faisal.eng@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+behaviour_planning = {git = "https://github.com/MFaisalZaki/pyBehaviourPlanning.git"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
