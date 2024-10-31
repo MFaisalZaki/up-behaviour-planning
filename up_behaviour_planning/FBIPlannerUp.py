@@ -4,7 +4,8 @@ import unified_planning as up
 from unified_planning.engines.results import PlanGenerationResultStatus as ResultStatus
 from unified_planning.engines.results import PlanGenerationResult
 
-from behaviour_planning.over_domain_models.smt.fbi.planner.planner import ForbidBehaviourIterative
+from behaviour_planning.over_domain_models.smt.fbi.planner.planner import ForbidBehaviourIterativeSMT
+from behaviour_planning.over_domain_models.ltl.fbi.planner.planner import ForbidBehaviourIterativePPLTL
 
 # We have to args: linear, upper_bound
 class FBIPlanner(up.engines.Engine, up.engines.mixins.OneshotPlannerMixin):
@@ -21,6 +22,9 @@ class FBIPlanner(up.engines.Engine, up.engines.mixins.OneshotPlannerMixin):
 
         self.bspace_cfg  = options.get('bspace-cfg', {})     
         assert 'dims' in self.bspace_cfg, "The behaviour space configuration must contain the 'dims' key."
+
+        self.planner_type = options.get('fbi-planner-type', None)
+        assert self.planner_type in ['ForbidBehaviourIterativeSMT', 'ForbidBehaviourIterativePPLTL'], "The planner type must be either 'ForbidBehaviourIterativeSMT' or 'ForbidBehaviourIterativePPLTL'."
 
     @property
     def name(self) -> str:
@@ -64,7 +68,7 @@ class FBIPlanner(up.engines.Engine, up.engines.mixins.OneshotPlannerMixin):
               output_stream: Optional[IO[str]] = None) -> 'up.engines.PlanGenerationResult':
         
         if 'k' in self.planner_cfg: del self.planner_cfg['k']
-        fbi_planner = ForbidBehaviourIterative(problem, self.bspace_cfg, self.planner_cfg)
+        fbi_planner = eval(self.planner_type)(problem, self.bspace_cfg, self.planner_cfg)
         plans = fbi_planner.plan(self.k) if self.k else fbi_planner.plan()
 
         if len(plans) > 0:
