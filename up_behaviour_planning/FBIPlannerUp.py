@@ -4,9 +4,6 @@ import unified_planning as up
 from unified_planning.engines.results import PlanGenerationResultStatus as ResultStatus
 from unified_planning.engines.results import PlanGenerationResult
 
-from behaviour_planning.over_domain_models.smt.fbi.planner.planner import ForbidBehaviourIterativeSMT
-from behaviour_planning.over_domain_models.ppltl.fbi.planner.planner import ForbidBehaviourIterativePPLTL
-
 # We have to args: linear, upper_bound
 class FBIPlanner(up.engines.Engine, up.engines.mixins.OneshotPlannerMixin):
     def __init__(self, **options):
@@ -68,7 +65,14 @@ class FBIPlanner(up.engines.Engine, up.engines.mixins.OneshotPlannerMixin):
               output_stream: Optional[IO[str]] = None) -> 'up.engines.PlanGenerationResult':
         
         if 'k' in self.planner_cfg: del self.planner_cfg['k']
-        fbi_planner = eval(self.planner_type)(problem, self.bspace_cfg, self.planner_cfg)
+
+        if self.planner_type == 'ForbidBehaviourIterativeSMT':
+            from behaviour_planning.over_domain_models.smt.fbi.planner.planner import ForbidBehaviourIterativeSMT
+            fbi_planner = ForbidBehaviourIterativeSMT(problem, self.bspace_cfg, self.planner_cfg)
+        else:
+            from behaviour_planning.over_domain_models.ppltl.fbi.planner.planner import ForbidBehaviourIterativePPLTL
+            fbi_planner = ForbidBehaviourIterativePPLTL(problem, self.bspace_cfg, self.planner_cfg)
+
         plans = fbi_planner.plan(self.k) if self.k else fbi_planner.plan()
 
         if len(plans) > 0:
