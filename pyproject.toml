@@ -7,8 +7,6 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-behaviour_planning = {git = "https://github.com/MFaisalZaki/pyBehaviourPlanning.git"}
-
 
 [build-system]
 requires = ["poetry-core"]
